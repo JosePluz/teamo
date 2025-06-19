@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mi Amor, En Tu Bolsillo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Great+Vibes&family=Marcellus&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables CSS para una gestión de colores consistente */
+:root {
+    --color-primary-dark: #6a2a30; /* Borgoña oscuro, casi vino */
+    --color-primary-light: #a64d55; /* Tono de rosa/borgoña más suave */
+    --color-secondary-cream: #fefdf8; /* Crema muy claro, casi blanco */
+    --color-accent-gold: #d4af37; /* Dorado metálico */
+    --color-accent-rose: #e6b8c2; /* Rosa suave */
+    --color-text-dark: #3a2e3f; /* Morado muy oscuro/negro suave */
+    --color-text-light: #7c687e; /* Gris lavanda */
+
+    --font-heading: 'Great Vibes', cursive; /* Para títulos grandes y fluidos */
+    --font-body: 'Cormorant Garamond', serif; /* Para el cuerpo del mensaje, elegante y legible */
+    --font-subtitle: 'Playfair Display', serif; /* Para subtítulos y frases clave */
+    --font-ui: 'Marcellus', serif; /* Para elementos de UI (interfaz de usuario) como el CTA */
+}
+
+/* 1. Reset Básico y Estilos del Cuerpo */
+/* Asegura una experiencia consistente en todos los navegadores y centrado */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw; /* Ancho de la ventana */
+    height: 100vh; /* Alto de la ventana */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Muy importante para prevenir scroll no deseado en móvil */
+    position: relative; /* Para posicionar el overlay de fondo */
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    /* Fondo con gradiente animado para un efecto visual envolvente */
+    background: linear-gradient(135deg, #d4a5a5, #f5e6e8, #a8dadc);
+    background-size: 400% 400%; /* Tamaño más grande para una animación más fluida */
+    animation: backgroundPan 30s ease-in-out infinite alternate; /* Animación de movimiento lento */
+    touch-action: manipulation; /* Optimización para táctil: previene el doble toque y el zoom */
+}
+
+/* Animación del gradiente de fondo */
+@keyframes backgroundPan {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* 2. Efecto Radial Interactivo de Fondo */
+/* Simula un punto de luz que sigue el dedo/cursor, creando un efecto de "aura" */
+.background-radial-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Crucial: permite la interacción con la tarjeta que está debajo */
+    /* El `background` de este elemento es manipulado por JavaScript */
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0) 50%);
+    transition: background 0.08s ease-out; /* Transición muy rápida para suavizar el movimiento del brillo */
+    z-index: 1; /* Asegura que esté por debajo de la tarjeta */
+}
+
+/* 3. Contenedor Principal de la Tarjeta */
+/* Establece la perspectiva 3D y el tamaño general de la carta en la pantalla */
+.card-mobile-container {
+    position: relative;
+    width: 90vw; /* Ocupa el 90% del ancho de la ventana del móvil */
+    max-width: 400px; /* Limita el tamaño en pantallas grandes para que no sea excesivo */
+    height: 70vh; /* Ocupa el 70% del alto de la ventana del móvil */
+    max-height: 650px; /* Limita el alto máximo */
+    perspective: 1200px; /* Profundidad de la perspectiva 3D para un giro más pronunciado */
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.35)); /* Sombra suave para darle volumen */
+    z-index: 10; /* Asegura que la tarjeta esté encima de todo
+  /* --- Estilos del FRENTE de la tarjeta (card-mobile-front) --- */
+.card-mobile-front {
+    background: linear-gradient(to bottom right, var(--color-secondary-cream) 0%, #fffbf5 100%);
+    z-index: 2; /* Asegura que el frente esté visible */
+    position: relative; /* Para posicionar los elementos internos absolutos */
+    border: 1px solid var(--color-accent-rose); /* Borde sutil para definir los límites */
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Sombra interna para un efecto de profundidad suave */
+}
+
+/* Efecto de aura/brillo sutil en el frente */
+.front-glow-aura {
+    position: absolute;
+    inset: 15px; /* Crea un marco interior */
+    border-radius: 20px;
+    background: radial-gradient(circle at center, rgba(var(--color-accent-gold) / 0.3) 0%, transparent 60%);
+    filter: blur(15px); /* Suaviza el brillo */
+    opacity: 0; /* Inicialmente invisible */
+    animation: fadeInAura 2s ease-out 0.5s forwards; /* Animación de aparición */
+    pointer-events: none; /* No interfiere con interacciones */
+}
+
+@keyframes fadeInAura {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Decoraciones de esquina animadas en el frente */
+.front-decoration-top-left,
+.front-decoration-bottom-right {
+    position: absolute;
+    width: 80px; /* Tamaño adaptado para móvil */
+    height: 80px;
+    background: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0C50 0 100 50 100 100L0 100Z" fill="%23a64d55" fill-opacity="0.1"/%3E%3Cpath d="M0 0C50 0 100 50 100 100L0 100L0 0Z" fill="%23a64d55" fill-opacity="0.05"/%3E%3C/svg%3E') no-repeat center center / contain;
+    opacity: 0.6;
+    pointer-events: none;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out; /* Transición más suave */
+}
+
+.front-decoration-top-left {
+    top: -15px; /* Ligeramente fuera del borde */
+    left: -15px;
+    transform: rotate(0deg);
+    animation: fadeInSlideRotate 1.5s ease-out 0.8s forwards; /* Animación de entrada */
+    opacity: 0; /* Empieza oculto */
+}
+
+.front-decoration-bottom-right {
+    bottom: -15px;
+    right: -15px;
+    transform: rotate(180deg);
+    animation: fadeInSlideRotate 1.5s ease-out 1s forwards; /* Animación de entrada con retraso */
+    opacity: 0; /* Empieza oculto */
+}
+
+/* Animación de entrada para las decoraciones de esquina */
+@keyframes fadeInSlideRotate {
+    0% { opacity: 0; transform: translateY(20px) rotate(0deg); }
+    100% { opacity: 0.6; transform: translateY(0px) rotate(var(--rotation, 0deg)); }
+}
+
+/* Efecto al tocar/pasar el ratón (la clase se añade por JS en el wrapper) */
+.card-mobile-wrapper.is-flipped .front-decoration-top-left {
+    transform: rotate(20deg) scale(1.1);
+    opacity: 0.2; /* Se desvanece un poco al girar */
+}
+.card-mobile-wrapper.is-flipped .front-decoration-bottom-right {
+    transform: rotate(160deg) scale(1.1);
+    opacity: 0.2;
+}
+
+/* Área del título principal */
+.front-content-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Permite que ocupe el espacio disponible */
+    z-index: 5; /* Asegura que esté sobre las decoraciones */
+    padding: 20px 0; /* Padding vertical para centrar mejor */
+}
+
+.main-mobile-title {
+    font-family: var(--font-heading);
+    font-size: 3.5em; /* Tamaño grande pero legible en móvil */
+    color: var(--color-primary-dark);
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    line-height: 1.1; /* Espacio entre líneas */
+    text-align: center;
+    white-space: nowrap; /* Evita que las palabras se rompan en líneas si hay espacio */
+    overflow: hidden; /* Para la animación de aparición */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Para animar las palabras individualmente */
+    flex-wrap: wrap; /* Permite que las palabras se envuelvan si es necesario */
+    justify-content: center; /* Centra las palabras */
+}
+
+.title-word {
+    display: inline-block; /* Permite transformar cada palabra */
+    opacity: 0; /* Empieza oculto */
+    transform: translateY(20px) scale(0.9); /* Empieza un poco abajo y pequeño */
+    animation: slideInWord 1s ease-out forwards;
+    margin: 0 5px; /* Espacio entre palabras */
+}
+
+/* Retrasos para la animación secuencial de las palabras */
+.title-word.delay-1 { animation-delay: 1.2s; }
+.title-word.delay-2 { animation-delay: 1.4s; }
+.title-word.delay-3 { animation-delay: 1.6s; }
+.title-word.delay-4 { animation-delay: 1.8s; }
+
+@keyframes slideInWord {
+    0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Subtítulo */
+.mobile-subtitle {
+    font-family: var(--font-subtitle);
+    font-size: 1.2em; /* Tamaño legible */
+    color: var(--color-text-light);
+    font-style: italic;
+    text-align: center;
+    max-width: 90%;
+    margin-top: 20px;
+    opacity: 0; /* Empieza oculto */
+    animation: fadeInScaleUpSubtitle 1.2s ease-out forwards;
+}
+
+.mobile-subtitle.delay-5 { animation-delay: 2.2s; } /* Retraso para que aparezca después del título */
+
+@keyframes fadeInScaleUpSubtitle {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Icono de corazón pulsante con efecto de brillo */
+.heart-mobile-icon {
+    font-size: 90px; /* Tamaño generoso para móvil */
+    color: var(--color-primary-light);
+    position: relative;
+    margin-top: 30px;
+    opacity: 0; /* Empieza oculto */
+    animation: pulseHeart 1.5s infinite alternate, fadeInHeart 1s ease-out 2.5s forwards; /* Doble animación */
+    z-index: 5;
+}
+
+.heart-mobile-icon.delay-6 { animation-delay: 2.5s; }
+
+@keyframes pulseHeart {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+/* Efecto de brillo alrededor del corazón */
+.heart-mobile-pulse-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 25px 8px var(--color-primary-light), 0 0 50px 15px rgba(255, 99, 132, 0.4);
+    opacity: 0; /* Empieza oculto */
+    animation: heartGlowFade 2s infinite alternate, fadeInHeartGlow 1s ease-out 2.5s forwards; /* Animaciones combinadas */
+    pointer-events: none;
+}
+
+@keyframes heartGlowFade {
+    0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.05); }
+    100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Animación de aparición para el corazón y su brillo */
+@keyframes fadeInHeart {
+    0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeInHeartGlow {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Indicador de "Toca para Abrir" */
+.tap-indicator {
+    font-family: var(--font-ui);
+    color: var(--color-text-light);
+    font-size: 1.1em;
+    text-align: center;
+    margin-top: auto; /* Empuja al fondo */
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0; /* Empieza oculto */
+    animation: fadeInTapIndicator 1.5s ease-out 3s forwards; /* Animación de aparición con retraso */
+    z-index: 5;
+}
+
+.tap-indicator.delay-7 { animation-delay: 3s; }
+
+.tap-arrow {
+    font-size: 2.2em;
+    animation: bounceArrow 1.5s infinite; /* Animación de rebote */
+}
+
+@keyframes fadeInTapIndicator {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceArrow {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-8px); }
+    60% { transform: translateY(-4px); }
+}
+  /* --- Estilos de la PARTE TRASERA de la tarjeta (card-mobile-back) --- */
+.card-mobile-back {
+    background: linear-gradient(to top left, #fcfaf7 0%, var(--color-secondary-cream) 100%);
+    transform: rotateY(180deg); /* Asegura que esta cara sea visible después del giro */
+    color: var(--color-text-dark);
+    text-align: center;
+    position: relative;
+    overflow: hidden; /* Muy importante para contener animaciones internas */
+    border: 1px solid var(--color-accent-rose); /* Borde sutil */
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Sombra interna para profundidad */
+}
+
+/* Textura sutil de fondo en la parte trasera */
+.back-texture-overlay {
+    position: absolute;
+    inset: 0;
+    /* Patrón de damasco o filigrana sutil para un toque de lujo */
+    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23d4a5a5" fill-opacity="0.06"%3E%3Cpath d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h96V95zm4 0h-4v1h4v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h9v4h1v-4h4V95zm-95 0h-1v4H0v1h96v-1h-1v-4H1zm0 4h1v1h-1v4H0v-1h1v-4zm-1 0h1v4H0v1h96v-1h-1v-4H1zm0 4h1v1h-1v4H0v-1h1v-4zM96 0h4v1h-4v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1h-9v4h-1V1H0V0h96zm4 0h-4v1h4v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h9v4h1V1h4V0zM1 0h-1v4H0v1h96V1h-1V4H1zm0 4h1v1h-1v4H0V1h1V4z"/%3E%3C/g%3E%3C/svg%3E');
+    background-size: 70px; /* Tamaño más pequeño para mayor repetición en móvil */
+    opacity: 0.1; /* Muy sutil */
+    animation: textureScroll 90s linear infinite; /* Movimiento de textura muy lento */
+    pointer-events: none;
+}
+
+@keyframes textureScroll {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Decoraciones de esquina con gradiente radial y animación de flotación */
+.back-decoration-top-right,
+.back-decoration-bottom-left {
+    position: absolute;
+    width: 100px; /* Tamaño adaptado */
+    height: 100px;
+    border-radius: 50%; /* Forma circular */
+    background: radial-gradient(circle at center, rgba(var(--color-accent-rose) / 0.25) 0%, transparent 60%);
+    filter: blur(10px); /* Suaviza el efecto */
+    opacity: 0.8;
+    pointer-events: none;
+    animation: floatSubtle 12s ease-in-out infinite alternate;
+}
+
+.back-decoration-top-right {
+    top: -30px;
+    right: -30px;
+    animation-delay: 0s;
+}
+
+.back-decoration-bottom-left {
+    bottom: -30px;
+    left: -30px;
+    animation-delay: 6s; /* Retraso para un movimiento asincrónico */
+}
+
+@keyframes floatSubtle {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    50% { transform: translate(10px, 10px) scale(1.02); opacity: 0.9; }
+    100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+}
+
+/* Contenedor del mensaje principal */
+.message-mobile-wrapper {
+    z-index: 1; /* Asegura que el texto esté sobre las decoraciones de fondo */
+    margin-top: 30px; /* Espacio desde el borde superior */
+    padding: 0 20px; /* Padding horizontal para el texto */
+    font-family: var(--font-body);
+    max-height: calc(100% - 90px); /* Deja espacio para el título y firma */
+    overflow-y: auto; /* Permite desplazamiento si el texto es muy largo en móvil */
+    text-align: justify; /* Justifica el texto para una apariencia pulcra */
+    position: relative;
+    opacity: 0; /* Empieza oculto para la animación */
+    animation: fadeInMessage 1.5s ease-out 1.8s forwards; /* Animación de aparición con retraso */
+    -webkit-overflow-scrolling: touch; /* Suaviza el desplazamiento en iOS */
+}
+
+/* Animación de aparición del mensaje */
+@keyframes fadeInMessage {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilos de la barra de desplazamiento para WebKit (Chrome, Safari, Android) */
+.message-mobile-wrapper::-webkit-scrollbar {
+    width: 6px; /* Ancho más pequeño para móvil */
+    background: transparent; /* Fondo transparente */
+}
+.message-mobile-wrapper::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.03); /* Pista muy sutil */
+    border-radius: 10px;
+}
+.message-mobile-wrapper::-webkit-scrollbar-thumb {
+    background: var(--color-primary-light); /* Color del "pulgar" */
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.7); /* Borde claro para resaltar */
+}
+
+/* Título del mensaje */
+.message-mobile-title {
+    font-family: var(--font-heading);
+    font-size: 2.2em; /* Tamaño legible en móvil */
+    color: var(--color-primary-dark);
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+/* Párrafos del mensaje */
+.message-mobile-paragraph {
+    margin-bottom: 1em;
+    text-indent: 1.2em; /* Sangría en el primer párrafo de cada bloque */
+    font-size: 1em; /* Tamaño de fuente base para legibilidad */
+    line-height: 1.6; /* Espaciado entre líneas para mejor lectura */
+    color: var(--color-text-dark);
+    animation: fadeInText 1s ease-out forwards; /* Animación de aparición suave */
+    opacity: 0;
+}
+
+/* Retrasos para los párrafos, si se desea una aparición secuencial */
+.message-mobile-paragraph:nth-child(1) { animation-delay: 2.2s; }
+.message-mobile-paragraph:nth-child(2) { animation-delay: 2.6s; }
+.message-mobile-paragraph:nth-child(3) { animation-delay: 3.0s; }
+.message-mobile-paragraph:nth-child(4) { animation-delay: 3.4s; }
+.message-mobile-paragraph.signature-mobile { animation-delay: 3.8s; }
+.message-mobile-paragraph.signature-name { animation-delay: 4.2s; }
+
+@keyframes fadeInText {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Línea de la firma */
+.signature-mobile {
+    text-indent: 0; /* Sin sangría para la firma */
+    margin-top: 2em;
+    font-style: italic;
+    font-family: var(--font-subtitle);
+    font-size: 1.1em;
+    text-align: center; /* Centrar la firma */
+    color: var(--color-text-light);
+}
+
+.signature-name {
+    text-indent: 0;
+    font-family: var(--font-heading); /* Fuente del título para la firma final */
+    font-size: 1.5em; /* Tamaño destacado */
+    color: var(--color-primary-dark);
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* Efecto de partículas flotantes (sustituto de pétalos para un look más "mágico") */
+.floating-particles-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0; /* Detrás del contenido del mensaje */
+}
+
+/* Creación de partículas individuales (se pueden añadir más con JS para mayor densidad) */
+.floating-particles-effect::before,
+.floating-particles-effect::after {
+    content: '✨'; /* Un emoji de brillo, o puedes usar '🌟', '💫', '💖' */
+    position: absolute;
+    font-size: 1.5em; /* Tamaño de las partículas */
+    color: rgba(255, 255, 255, 0.7); /* Blanco brillante semi-transparente */
+    opacity: 0;
+    animation: floatParticles 18s linear infinite; /* Animación de flotar */
+    text-shadow: 0 0 8px rgba(255,255,255,0.8); /* Pequeño brillo a la partícula */
+}
+
+.floating-particles-effect::before {
+    left: 20%;
+    animation-delay: 0s;
+    animation-duration: 18s;
+    font-size: 1.3em;
+}
+
+.floating-particles-effect::after {
+    left: 70%;
+    animation-delay: 9s; /* Retraso para un efecto asincrónico */
+    animation-duration: 22s;
+    font-size: 1.7em;
+    color: rgba(255, 220, 230, 0.7); /* Tono ligeramente rosado */
+}
+
+@keyframes floatParticles {
+    0% {
+        transform: translate(0, -10%) rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% {
+        transform: translate(30px, 105%) rotate(360deg) scale(1.2); /* Se mueve, cae y cambia de tamaño */
+        opacity: 0;
+    }
+}
+
+/* ----------------------------------------------------------- */
+/* Media Queries para Optimización en Dispositivos Más Grandes */
+/* ----------------------------------------------------------- */
+
+@media (min-width: 600px) {
+    /* Ajustes para tabletas y escritorios pequeños */
+    .card-mobile-container {
+        width: 380px; /* Ancho fijo para escritorios pequeños */
+        height: 580px; /* Alto fijo */
+    }
+
+    .main-mobile-title {
+        font-size: 4em; /* Títulos un poco más grandes */
+    }
+
+    .heart-mobile-icon {
+        font-size: 100px;
+    }
+
+    .mobile-subtitle {
+        font-size: 1.3em;
+    }
+
+    .tap-indicator span {
+        font-size: 1.2em; /* Texto CTA ligeramente más grande */
+    }
+
+    .tap-arrow {
+        font-size: 2.5em;
+    }
+
+    .message-mobile-title {
+        font-size: 2.5em;
+    }
+
+    .message-mobile-paragraph {
+        font-size: 1.1em; /* Texto del mensaje ligeramente más grande */
+    }
+
+    .signature-name {
+        font-size: 1.6em;
+    }
+}
+
+@media (min-width: 900px) {
+    /* Ajustes para monitores de escritorio */
+    .card-mobile-container {
+        width: 420px; /* Ancho un poco mayor */
+        height: 620px; /* Alto un poco mayor */
+        filter: drop-shadow(0 35px 70px rgba(0, 0, 0, 0.4)); /* Sombra más pronunciada */
+    }
+
+    .main-mobile-title {
+        font-size: 4.8em;
+    }
+
+    .heart-mobile-icon {
+        font-size: 110px;
+    }
+
+    .mobile-subtitle {
+        font-size: 1.4em;
+    }
+
+    .message-mobile-title {
+        font-size: 2.8em;
+    }
+
+    .message-mobile-paragraph {
+        font-size: 1.15em;
+    }
+
+    .signature-mobile {
+        font-size: 1.2em;
+    }
+
+    .signature-name {
+        font-size: 1.7em;
+    }
+
+    /* Ajustes para que el brillo de fondo sea más visible en pantallas grandes */
+    .background-radial-effect {
+        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="background-radial-effect"></div>
+
+    <div class="card-mobile-container">
+        <div class="card-mobile-wrapper">
+            <div class="card-mobile-front">
+                <div class="front-glow-aura"></div> <div class="front-decoration-top-left"></div>
+                <div class="front-decoration-bottom-right"></div>
+                
+                <div class="front-content-area">
+                    <h1 class="main-mobile-title">
+                        <span class="title-word delay-1">Para</span> 
+                        <span class="title-word delay-2">Mi</span> 
+                        <span class="title-word delay-3">Único</span> 
+                        <span class="title-word delay-4">Amor</span>
+                    </h1>
+                    <p class="mobile-subtitle delay-5">Toca con dulzura para desvelar el secreto...</p>
+                    <div class="heart-mobile-icon delay-6">
+                        <span class="heart-mobile-pulse-effect"></span>
+                        💖
+                    </div>
+                </div>
+                
+                <div class="tap-indicator delay-7">
+                    <span>Toca para Abrir</span>
+                    <span class="tap-arrow">👇</span>
+                </div>
+            </div>
+
+            <div class="card-mobile-back">
+                <div class="back-texture-overlay"></div> <div class="back-decoration-top-right"></div>
+                <div class="back-decoration-bottom-left"></div>
+
+                <div class="message-mobile-wrapper">
+                    <h2 class="message-mobile-title">Mi Alma, Revelada</h2>
+                    <p class="message-mobile-paragraph">Mi amor, en el infinito lienzo de la vida, tu eres la obra de arte que mi corazón siempre anheló. Cada risa, cada mirada, cada instante contigo es un tesoro incalculable que guardo con la más profunda devoción.</p>
+                    <p class="message-mobile-paragraph">Desde aquel mágico momento en que nuestros caminos se entrelazaron, supe que mi búsqueda había terminado. Eres el faro que guía mis pasos, la melodía que acompaña mis sueños, y el suave susurro que me recuerda la belleza de existir.</p>
+                    <p class="message-mobile-paragraph">Prometo amarte sin medida, cuidarte con ternura infinita y ser tu refugio seguro en cada amanecer. Que nuestro amor florezca como un jardín eterno, donde cada pétalo represente un recuerdo precioso y cada aroma sea la esencia de nuestra unión.</p>
+                    <p class="message-mobile-paragraph">Gracias por ser mi inspiración, mi calma y mi mayor alegría. Eres el universo entero para mí, mi amado(a) [Nombre/Apodo Cariñoso].</p>
+                    <p class="message-mobile-paragraph signature-mobile">Con un amor que trasciende el tiempo y el espacio,</p>
+                    <p class="message-mobile-paragraph signature-name">Tu [Nombre/Apodo Cariñoso Aquí]</p>
+                </div>
+                
+                <div class="floating-particles-effect"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardWrapper = document.querySelector('.card-mobile-wrapper');
+            const backgroundEffect = document.querySelector('.background-radial-effect');
+            let isFlipped = false;
+
+            // Función para el efecto de brillo de fondo (adaptado para móvil)
+            const updateBackgroundGlow = (x, y) => {
+                backgroundEffect.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%)`;
+            };
+
+            // Para dispositivos táctiles
+            cardWrapper.addEventListener('touchstart', (e) => {
+                // Prevenir el zoom con doble toque si es necesario, aunque user-scalable=no ya lo ayuda
+                // e.preventDefault(); 
+                
+                if (cardWrapper) {
+                    isFlipped = !isFlipped;
+                    cardWrapper.style.transform = isFlipped ? 'rotateY(180deg) scale(1.03)' : 'rotateY(0deg) scale(1)';
+                }
+                // Actualiza el brillo al tocar
+                const touch = e.touches[0];
+                updateBackgroundGlow(touch.clientX, touch.clientY);
+            });
+
+            // Para dispositivos no táctiles (escritorio/tablet con mouse)
+            cardWrapper.addEventListener('mouseenter', () => {
+                if (!('ontouchstart' in window)) { // Solo si no es un dispositivo táctil
+                    isFlipped = true;
+                    cardWrapper.style.transform = 'rotateY(180deg) scale(1.03)';
+                }
+            });
+
+            cardWrapper.addEventListener('mouseleave', () => {
+                if (!('ontouchstart' in window)) { // Solo si no es un dispositivo táctil
+                    isFlipped = false;
+                    cardWrapper.style.transform = 'rotateY(0deg) scale(1)';
+                }
+            });
+
+            // Efecto de brillo de fondo con mousemove (solo para no táctiles)
+            if (!('ontouchstart' in window)) {
+                document.addEventListener('mousemove', (e) => {
+                    updateBackgroundGlow(e.clientX, e.clientY);
+                });
+            } else {
+                // Eliminar el brillo si es un dispositivo táctil y no se detecta mouse
+                backgroundEffect.style.background = 'none'; 
+            }
+        });
+    </script>
+</body>
+</html>
